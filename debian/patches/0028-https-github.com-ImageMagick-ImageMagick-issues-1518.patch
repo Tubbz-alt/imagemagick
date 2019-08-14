@@ -1,0 +1,24 @@
+From: Cristy <mikayla-grace@urban-warrior.org>
+Date: Sun, 24 Mar 2019 17:13:45 -0400
+Subject: https://github.com/ImageMagick/ImageMagick/issues/1518
+Origin: https://github.com/ImageMagick/ImageMagick6/commit/e6103897fae2ed47e24b9cf7de719eea877b0504
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2019-12977
+Bug-Debian: https://bugs.debian.org/931191
+Bug: https://github.com/ImageMagick/ImageMagick/issues/1518
+
+---
+  coders/jp2.c | 1 +
+  1 file changed, 1 insertion(+)
+
+diff --git a/coders/jp2.c b/coders/jp2.c
+index dc32383..eb317c2 100644
+--- a/coders/jp2.c
++++ b/coders/jp2.c
+@@ -866,6 +866,7 @@ static MagickBooleanType WriteJP2Image(const ImageInfo *image_info,Image *image)
+       /*
+         Set tile size.
+       */
++      (void) memset(&geometry,0,sizeof(geometry));
+       flags=ParseAbsoluteGeometry(image_info->extract,&geometry);
+       parameters.cp_tdx=(int) geometry.width;
+       parameters.cp_tdy=(int) geometry.width;
