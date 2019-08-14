@@ -1,0 +1,25 @@
+From: Cristy <mikayla-grace@urban-warrior.org>
+Date: Sun, 24 Mar 2019 15:42:45 -0400
+Subject: https://github.com/ImageMagick/ImageMagick/issues/1519
+Origin: https://github.com/ImageMagick/ImageMagick6/commit/ae1ded6140bfa8ae9f6dcba5413b72d98ed94614
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2019-12978
+Bug-Debian: https://bugs.debian.org/931190
+Bug: https://github.com/ImageMagick/ImageMagick/issues/1519
+
+---
+  coders/pango.c | 2 ++
+  1 file changed, 2 insertions(+)
+
+diff --git a/coders/pango.c b/coders/pango.c
+index 5be1c54..d6fa057 100644
+--- a/coders/pango.c
++++ b/coders/pango.c
+@@ -185,6 +185,8 @@ static Image *ReadPANGOImage(const ImageInfo *image_info,
+   assert(exception->signature == MagickCoreSignature);
+   image=AcquireImage(image_info);
+   (void) ResetImagePage(image,"0x0+0+0");
++  if ((image->columns != 0) && (image->rows != 0))
++    (void) SetImageBackgroundColor(image);
+   /*
+     Format caption.
+   */
