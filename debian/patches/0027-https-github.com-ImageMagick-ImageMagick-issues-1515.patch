@@ -1,0 +1,49 @@
+From: Cristy <mikayla-grace@urban-warrior.org>
+Date: Sun, 24 Mar 2019 17:19:45 -0400
+Subject: https://github.com/ImageMagick/ImageMagick/issues/1515
+Origin: https://github.com/ImageMagick/ImageMagick6/commit/b4391bdd60df0a77e97a6ef1674f2ffef0e19e24
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2019-12974
+Bug-Debian: https://bugs.debian.org/931196
+Bug: https://github.com/ImageMagick/ImageMagick/issues/1515
+
+---
+  coders/pango.c | 7 +++++--
+  coders/vid.c   | 7 +++++--
+  2 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/coders/pango.c b/coders/pango.c
+index 5be1c54..c0c7ef4 100644
+--- a/coders/pango.c
++++ b/coders/pango.c
+@@ -196,8 +196,11 @@ static Image *ReadPANGOImage(const ImageInfo *image_info,
+       property=InterpretImageProperties(image_info,image,option+6);
+     else
+       property=InterpretImageProperties(image_info,image,option);
+-  (void) SetImageProperty(image,"caption",property);
+-  property=DestroyString(property);
++  if (property != (char *) NULL)
++    {
++      (void) SetImageProperty(image,"caption",property);
++      property=DestroyString(property);
++    }
+   caption=ConstantString(GetImageProperty(image,"caption"));
+   /*
+     Get context.
+diff --git a/coders/vid.c b/coders/vid.c
+index 2ab75c6..6acf769 100644
+--- a/coders/vid.c
++++ b/coders/vid.c
+@@ -176,8 +176,11 @@ static Image *ReadVIDImage(const ImageInfo *image_info,ExceptionInfo *exception)
+     if (next_image == (Image *) NULL)
+       break;
+     label=InterpretImageProperties(image_info,next_image,DefaultTileLabel);
+-    (void) SetImageProperty(next_image,"label",label);
+-    label=DestroyString(label);
++    if (label != (char *) NULL)
++      {
++        (void) SetImageProperty(next_image,"label",label);
++        label=DestroyString(label);
++      }
+     if (image_info->debug != MagickFalse)
+       (void) LogMagickEvent(CoderEvent,GetMagickModule(),
+         "geometry: %.20gx%.20g",(double) next_image->columns,(double)
