@@ -1,0 +1,59 @@
+From: Cristy <mikayla-grace@urban-warrior.org>
+Date: Mon, 17 Jun 2019 14:36:45 -0400
+Subject: https://github.com/ImageMagick/ImageMagick/issues/1586
+Origin: https://github.com/ImageMagick/ImageMagick6/commit/5e409ae7a389cdf2ed17469303be3f3f21cec450
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2019-13300
+Bug-Debian: https://bugs.debian.org/931454
+Bug: https://github.com/ImageMagick/ImageMagick/issues/1586
+
+---
+  magick/statistic.c | 15 +++++++++++----
+  1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/magick/statistic.c b/magick/statistic.c
+index 8f487a1..477c6f1 100644
+--- a/magick/statistic.c
++++ b/magick/statistic.c
+@@ -149,9 +149,12 @@ static MagickPixelPacket **DestroyPixelThreadSet(MagickPixelPacket **pixels)
+   return(pixels);
+ }
+ 
+-static MagickPixelPacket **AcquirePixelThreadSet(const Image *image,
++static MagickPixelPacket **AcquirePixelThreadSet(const Image *images,
+   const size_t number_images)
+ {
++  const Image
++    *next;
++
+   MagickPixelPacket
+     **pixels;
+ 
+@@ -160,6 +163,7 @@ static MagickPixelPacket **AcquirePixelThreadSet(const Image *image,
+     j;
+ 
+   size_t
++    columns,
+     number_threads;
+ 
+   number_threads=(size_t) GetMagickResourceLimit(ThreadResource);
+@@ -168,14 +172,17 @@ static MagickPixelPacket **AcquirePixelThreadSet(const Image *image,
+   if (pixels == (MagickPixelPacket **) NULL)
+     return((MagickPixelPacket **) NULL);
+   (void) memset(pixels,0,number_threads*sizeof(*pixels));
++  columns=images->columns;
++  for (next=images; next != (Image *) NULL; next=next->next)
++    columns=MagickMax(next->columns,columns);
+   for (i=0; i < (ssize_t) number_threads; i++)
+   {
+-    pixels[i]=(MagickPixelPacket *) AcquireQuantumMemory(image->columns,
++    pixels[i]=(MagickPixelPacket *) AcquireQuantumMemory(columns,
+       sizeof(**pixels));
+     if (pixels[i] == (MagickPixelPacket *) NULL)
+       return(DestroyPixelThreadSet(pixels));
+-    for (j=0; j < (ssize_t) image->columns; j++)
+-      GetMagickPixelPacket(image,&pixels[i][j]);
++    for (j=0; j < (ssize_t) columns; j++)
++      GetMagickPixelPacket(images,&pixels[i][j]);
+   }
+   return(pixels);
+ }
