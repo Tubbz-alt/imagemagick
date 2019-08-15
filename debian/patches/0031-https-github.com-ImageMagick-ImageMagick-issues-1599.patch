@@ -1,0 +1,24 @@
+From: Cristy <mikayla-grace@urban-warrior.org>
+Date: Tue, 18 Jun 2019 11:45:45 -0400
+Subject: https://github.com/ImageMagick/ImageMagick/issues/1599
+Origin: https://github.com/ImageMagick/ImageMagick6/commit/1e59b29e520d2beab73e8c78aacd5f1c0d76196d
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2019-13135
+Bug-Debian: https://bugs.debian.org/932079
+Bug: https://github.com/ImageMagick/ImageMagick/issues/1599
+
+---
+  coders/cut.c | 1 +
+  1 file changed, 1 insertion(+)
+
+diff --git a/coders/cut.c b/coders/cut.c
+index 2ef35f4..070136f 100644
+--- a/coders/cut.c
++++ b/coders/cut.c
+@@ -568,6 +568,7 @@ static Image *ReadCUTImage(const ImageInfo *image_info,ExceptionInfo *exception)
+   BImgBuff=(unsigned char *) AcquireQuantumMemory((size_t) ldblk,
+     sizeof(*BImgBuff));  /*Ldblk was set in the check phase*/
+   if(BImgBuff==NULL) goto NoMemory;
++  (void) memset(BImgBuff,0,(size_t) ldblk*sizeof(*BImgBuff));
+ 
+   offset=SeekBlob(image,6 /*sizeof(Header)*/,SEEK_SET);
+   if (offset < 0)
