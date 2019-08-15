@@ -1,0 +1,34 @@
+From: Cristy <mikayla-grace@urban-warrior.org>
+Date: Sat, 22 Jun 2019 18:30:45 -0400
+Subject: https://github.com/ImageMagick/ImageMagick/issues/1609
+Origin: https://github.com/ImageMagick/ImageMagick6/commit/35c7032723d85eee7318ff6c82f031fa2666b773
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2019-13297
+Bug-Debian: https://bugs.debian.org/931455
+Bug: https://github.com/ImageMagick/ImageMagick/issues/1609
+
+---
+  magick/threshold.c | 4 +++-
+  1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/magick/threshold.c b/magick/threshold.c
+index 7abb4c2..951d04d 100644
+--- a/magick/threshold.c
++++ b/magick/threshold.c
+@@ -202,6 +202,8 @@ MagickExport Image *AdaptiveThresholdImage(const Image *image,
+   threshold_image=CloneImage(image,0,0,MagickTrue,exception);
+   if (threshold_image == (Image *) NULL)
+     return((Image *) NULL);
++  if ((width == 0) || (height == 0))
++    return(threshold_image);
+   if (SetImageStorageClass(threshold_image,DirectClass) == MagickFalse)
+     {
+       InheritException(exception,&threshold_image->exception);
+@@ -905,7 +907,7 @@ MagickExport MagickBooleanType BilevelImageChannel(Image *image,
+               SetPixelOpacity(q,(MagickRealType) GetPixelOpacity(q) <=
+                 threshold ? 0 : QuantumRange);
+             else
+-              SetPixelAlpha(q,(MagickRealType) GetPixelAlpha(q) <= threshold ? 
++              SetPixelAlpha(q,(MagickRealType) GetPixelAlpha(q) <= threshold ?
+                 OpaqueOpacity : TransparentOpacity);
+           }
+         if (((channel & IndexChannel) != 0) &&
