@@ -1,0 +1,64 @@
+From: Cristy <mikayla-grace@urban-warrior.org>
+Date: Mon, 8 Jul 2019 6:21:45 -0400
+Subject: https://github.com/ImageMagick/ImageMagick/issues/1629
+Origin: https://github.com/ImageMagick/ImageMagick6/commit/4f31d78716ac94c85c244efcea368fea202e2ed4
+Bug-Debian-Security: https://security-tracker.debian.org/tracker/CVE-2019-13454
+Bug-Debian: https://bugs.debian.org/931740
+Bug: https://github.com/ImageMagick/ImageMagick/issues/1629
+
+---
+  magick/layer.c | 28 +++++++++++++++-------------
+  1 file changed, 15 insertions(+), 13 deletions(-)
+
+diff --git a/magick/layer.c b/magick/layer.c
+index 90b0bb7..c4f6438 100644
+--- a/magick/layer.c
++++ b/magick/layer.c
+@@ -1643,7 +1643,7 @@ MagickExport void RemoveDuplicateLayers(Image **images,
+      ExceptionInfo *exception)
+ {
+   register Image
+-    *curr,
++    *image,
+     *next;
+ 
+   RectangleInfo
+@@ -1656,24 +1656,26 @@ MagickExport void RemoveDuplicateLayers(Image **images,
+   assert(exception != (ExceptionInfo *) NULL);
+   assert(exception->signature == MagickCoreSignature);
+ 
+-  curr=GetFirstImageInList(*images);
+-  for (; (next=GetNextImageInList(curr)) != (Image *) NULL; curr=next)
++  image=GetFirstImageInList(*images);
++  for (; (next=GetNextImageInList(image)) != (Image *) NULL; image=next)
+   {
+-    if ( curr->columns != next->columns || curr->rows != next->rows
+-         || curr->page.x != next->page.x || curr->page.y != next->page.y )
++    if ((image->columns != next->columns) || (image->rows != next->rows) ||
++        (image->page.x != next->page.x) || (image->page.y != next->page.y))
+       continue;
+-    bounds=CompareImageBounds(curr,next,CompareAnyLayer,exception);
++    bounds=CompareImageBounds(image,next,CompareAnyLayer,exception);
+     if ( bounds.x < 0 ) {
+       /*
+-        the two images are the same, merge time delays and delete one.
++        Two images are the same, merge time delays and delete one.
+       */
+-      size_t time;
+-      time = curr->delay*1000/curr->ticks_per_second;
+-      time += next->delay*1000/next->ticks_per_second;
++      size_t
++        time;
++
++      time = 1000*image->delay*PerceptibleReciprocal(image->ticks_per_second);
++      time += 1000*next->delay*PerceptibleReciprocal(next->ticks_per_second);
+       next->ticks_per_second = 100L;
+-      next->delay = time*curr->ticks_per_second/1000;
+-      next->iterations = curr->iterations;
+-      *images = curr;
++      next->delay = time*image->ticks_per_second/1000;
++      next->iterations = image->iterations;
++      *images = image;
+       (void) DeleteImageFromList(images);
+     }
+   }
