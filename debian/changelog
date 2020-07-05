@@ -1,3 +1,10 @@
+imagemagick (8:6.9.10.23.1-1+dde) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * rebuild
+
+ -- zhouzilong <zhouzilong@uniontech.com>  Sun, 05 Jul 2020 17:06:50 +0800
+
 imagemagick (8:6.9.10.23+dfsg-2.1+deb10u1) buster-security; urgency=medium
 
   * CVE-2019-10649 
